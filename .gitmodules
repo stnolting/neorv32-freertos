@@ -1,6 +1,6 @@
-[submodule "neorv32"]
-	path = neorv32
-	url = https://github.com/stnolting/neorv32.git
 [submodule "FreeRTOS-Kernel"]
 	path = FreeRTOS-Kernel
 	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "neorv32_freertos_demo/neorv32"]
+	path = neorv32_freertos_demo/neorv32
+	url = https://github.com/stnolting/neorv32.git

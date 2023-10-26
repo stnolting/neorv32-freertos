@@ -1,0 +1,23 @@
+# generated application files
+*.bin
+*.o
+*.elf
+*.asm
+*.out
+*.hex
+*_image.vhd
+
+# keep default VHDL memory images
+!rtl/core/*_image.vhd
+
+# host executables
+sw/image_gen/image_gen
+sw/image_gen/image_gen.exe
+
+# temporary/legacy files/folders
+*.tmp
+~*
+
+# compiled ghdl stuff
+*.cf
+*.o
