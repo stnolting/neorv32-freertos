@@ -7,4 +7,4 @@ updates:
   schedule:
     interval: weekly
     time: '04:00'
-  open-pull-requests-limit: 99
+  open-pull-requests-limit: 4
