@@ -1,0 +1,46 @@
+# *****************************************************************************
+# NEORV32 FreeRTOS Makefile
+# *****************************************************************************
+
+# User's application sources (*.c, *.cpp, *.s, *.S); add additional files here
+APP_SRC = $(wildcard ./*.c) $(wildcard ./*.s) $(wildcard ./*.cpp) $(wildcard ./*.S)
+
+# User's application include folders (don't forget the '-I' before each entry)
+APP_INC = -I .
+
+# User's application include folders - for assembly files only (don't forget the '-I' before each entry)
+ASM_INC = -I .
+
+# User flags for additional configuration (will be added to compiler flags)
+USER_FLAGS =
+
+# -----------------------------------------------------------------------------
+# FreeRTOS
+# -----------------------------------------------------------------------------
+
+# Kernel
+APP_SRC += $(wildcard ../FreeRTOS-Kernel/*.c)
+APP_INC += -I ../FreeRTOS-Kernel/include
+
+# RISC-V specifics
+APP_SRC += $(wildcard ../FreeRTOS-Kernel/portable/GCC/RISC-V/*.c)
+APP_SRC += ../FreeRTOS-Kernel/portable/GCC/RISC-V/portASM.S
+APP_INC += -I ../FreeRTOS-Kernel/portable/GCC/RISC-V
+
+# Heap management
+APP_SRC += $(wildcard ../FreeRTOS-Kernel/portable/MemMang/heap_4.c)
+
+# -----------------------------------------------------------------------------
+# NEORV32
+# -----------------------------------------------------------------------------
+
+# Set maximum heap size
+override USER_FLAGS += "-Wl,--defsym,__neorv32_heap_size=3600"
+
+# Chip-specific configuration
+APP_INC += -I chip_specific_extensions/neorv32
+ASM_INC += -I chip_specific_extensions/neorv32
+
+# CSoftware framework, HAL, build environment, etc.
+NEORV32_HOME ?= ../neorv32
+include $(NEORV32_HOME)/sw/common/common.mk
