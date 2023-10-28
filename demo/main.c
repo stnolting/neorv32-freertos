@@ -3,7 +3,7 @@
  * https://github.com/stnolting/neorv32
  ******************************************************************************
  * FreeRTOS Kernel V10.4.4
- * Copyright (C) 2022 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Copyright (C) 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -31,20 +31,19 @@
 
 /* FreeRTOS kernel */
 #include <FreeRTOS.h>
-#include <semphr.h>
-#include <queue.h>
 #include <task.h>
 
 /* NEORV32 HAL */
 #include <neorv32.h>
 
-/* UART0 transmission speed */
-#define BAUD_RATE 19200
+/* Platform UART configuration */
+#define UART_BAUD_RATE (19200)         // transmission speed
+#define UART_HW_HANDLE (NEORV32_UART0) // use UART0 (primary UART)
 
 /* External definitions */
-extern const unsigned __crt0_max_heap;
-extern void main_blinky(void);
-extern void freertos_risc_v_trap_handler(void);
+extern const unsigned __crt0_max_heap;          // may heap size from NEORV32 linker script
+extern void blinky(void);                       // actual show-case application
+extern void freertos_risc_v_trap_handler(void); // FreeRTOS core
 
 /* Prototypes for the standard FreeRTOS callback/hook functions implemented
  * within this file. See https://www.freertos.org/a00016.html */
@@ -53,7 +52,7 @@ void vApplicationIdleHook(void);
 void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName);
 void vApplicationTickHook(void);
 
-/* Platform specifics */
+/* Platform-specific prototypes */
 void vToggleLED(void);
 void vSendString(const char * pcString);
 static void prvSetupHardware(void);
@@ -64,13 +63,18 @@ static void prvSetupHardware(void);
  ******************************************************************************/
 int main( void ) {
 
-	prvSetupHardware(); // setup hardware
+  // setup hardware
+	prvSetupHardware();
 
-  neorv32_uart0_printf("<<< NEORV32 running FreeRTOS %s >>>\n\n", tskKERNEL_VERSION_NUMBER); // say hello
+  // say hello
+  neorv32_uart_printf(UART_HW_HANDLE, "<<< NEORV32 running FreeRTOS %s >>>\n\n", tskKERNEL_VERSION_NUMBER);
 
-  main_blinky(); // run actual application code
+  // run actual application code
+  blinky();
 
-  return -1; // we should never reach this
+  // we should never reach this
+  neorv32_uart_printf(UART_HW_HANDLE, "WARNING! blinky returned!\n");
+  return -1;
 }
 
 
@@ -83,37 +87,70 @@ int main( void ) {
  ******************************************************************************/
 static void prvSetupHardware(void) {
 
-  // install the freeRTOS trap handler
+  // ----------------------------------------------------------
+  // CPU setup
+  // ----------------------------------------------------------
+
+  // install the freeRTOS kernel trap handler
   neorv32_cpu_csr_write(CSR_MTVEC, (uint32_t)&freertos_risc_v_trap_handler);
+
+  // ----------------------------------------------------------
+  // Peripheral setup
+  // ----------------------------------------------------------
 
   // clear GPIO.out port
   neorv32_gpio_port_set(0);
 
   // setup UART0 at default baud rate, no interrupts
-  neorv32_uart0_setup(BAUD_RATE, 0);
+  neorv32_uart_setup(UART_HW_HANDLE, UART_BAUD_RATE, 0);
+
+  // ----------------------------------------------------------
+  // Configuration checks
+  // ----------------------------------------------------------
+
+  // machine timer available?
+  if (neorv32_mtime_available() == 0) {
+    neorv32_uart_printf(UART_HW_HANDLE, "WARNING! MTIME machine timer not available!\n");
+  }
+
+  // general purpose timer available?
+  if (neorv32_gptmr_available() == 0) {
+    neorv32_uart_printf(UART_HW_HANDLE, "WARNING! GPTMR timer not available!\n");
+  }
 
   // check heap size configuration
-  volatile uint32_t neorv32_max_heap = (uint32_t)&__crt0_max_heap;
-  if (neorv32_max_heap != (uint32_t)configTOTAL_HEAP_SIZE){
-    neorv32_uart0_printf("WARNING! Incorrect 'configTOTAL_HEAP_SIZE' configuration!\n"
-                         "FreeRTOS configTOTAL_HEAP_SIZE: %u bytes\n"
-                         "NEORV32 makefile heap size:     %u bytes\n\n",
-                         (uint32_t)configTOTAL_HEAP_SIZE, neorv32_max_heap);
+  uint32_t neorv32_max_heap = (uint32_t)&__crt0_max_heap;
+  if ((uint32_t)&__crt0_max_heap != (uint32_t)configTOTAL_HEAP_SIZE){
+    neorv32_uart_printf(UART_HW_HANDLE,
+                        "WARNING! Incorrect 'configTOTAL_HEAP_SIZE' configuration!\n"
+                        "FreeRTOS configTOTAL_HEAP_SIZE: %u bytes\n"
+                        "NEORV32 makefile heap size:     %u bytes\n\n",
+                        (uint32_t)configTOTAL_HEAP_SIZE, neorv32_max_heap);
   }
 
   // check clock frequency configuration
-  if (NEORV32_SYSINFO->CLK != (uint32_t)configCPU_CLOCK_HZ) {
-    neorv32_uart0_printf("WARNING! Incorrect 'configCPU_CLOCK_HZ' configuration!\n"
-                         "FreeRTOS configCPU_CLOCK_HZ: %u Hz\n"
-                         "NEORV32 clock speed:         %u Hz\n\n",
-                         (uint32_t)configCPU_CLOCK_HZ, NEORV32_SYSINFO->CLK);
+  uint32_t neorv32_clk_hz = (uint32_t)NEORV32_SYSINFO->CLK;
+  if (neorv32_clk_hz != (uint32_t)configCPU_CLOCK_HZ) {
+    neorv32_uart_printf(UART_HW_HANDLE,
+                        "WARNING! Incorrect 'configCPU_CLOCK_HZ' configuration!\n"
+                        "FreeRTOS configCPU_CLOCK_HZ: %u Hz\n"
+                        "NEORV32 clock speed:         %u Hz\n\n",
+                        (uint32_t)configCPU_CLOCK_HZ, neorv32_clk_hz);
   }
 
-  // enable and configure further NEORV32-specific modules if required
-  // ...
+  // ----------------------------------------------------------
+  // Configure general-purpose timer (GPTMR) tick
+  // ----------------------------------------------------------
 
-  // enable NEORV32-specific interrupts if required
-  // ...
+  if (neorv32_gptmr_available() != 0) { // GPTMR implemented at all?
+
+    // configure timer for in continuous mode with clock divider = 64
+    // fire interrupt every 4 seconds
+    neorv32_gptmr_setup(CLK_PRSC_64, 1, ((uint32_t)configCPU_CLOCK_HZ / 64) * 4);
+
+    // enable GPTMR interrupt
+    neorv32_cpu_irq_enable(GPTMR_FIRQ_ENABLE);
+  }
 }
 
 
@@ -122,14 +159,17 @@ static void prvSetupHardware(void) {
  ******************************************************************************/
 void freertos_risc_v_application_interrupt_handler(void) {
 
-  // acknowledge/clear ALL pending fast-interrupt sources (FIRQs) - adapt this for your setup
-  neorv32_cpu_csr_write(CSR_MIP, 0);
-
-  // use the value from the mcause CSR to call interrupt-specific handlers
+  // mcause identifies the cause of the interrupt
   uint32_t mcause = neorv32_cpu_csr_read(CSR_MCAUSE);
 
-  // debug output
-  neorv32_uart0_printf("\n<NEORV32-IRQ> mcause = 0x%x </NEORV32-IRQ>\n", mcause);
+  if (mcause == GPTMR_TRAP_CODE) { // is GPTMR interrupt
+    neorv32_cpu_csr_clr(CSR_MIP, 1<<GPTMR_FIRQ_PENDING); // acknowledge/clear GPTM IRQ
+    neorv32_uart_printf(UART_HW_HANDLE, "GPTMR IRQ Tick\n");
+  }
+  else { // undefined interrupt cause
+    neorv32_cpu_csr_write(CSR_MIP, 0); // acknowledge/clear ALL pending fast-interrupt sources (FIRQs) 
+    neorv32_uart_printf(UART_HW_HANDLE, "\n<NEORV32-IRQ> mcause = 0x%x </NEORV32-IRQ>\n", mcause); // debug output
+  }
 }
 
 
@@ -138,11 +178,14 @@ void freertos_risc_v_application_interrupt_handler(void) {
  ******************************************************************************/
 void freertos_risc_v_application_exception_handler(void) {
 
-  // use the value from the mcause CSR to call exception-specific handlers
+  // mcause identifies the cause of the exception
   uint32_t mcause = neorv32_cpu_csr_read(CSR_MCAUSE);
 
+  // mepc identifies the address of the exception
+  uint32_t mepc = neorv32_cpu_csr_read(CSR_MEPC);
+
   // debug output
-  neorv32_uart0_printf("\n<NEORV32-EXC> mcause = 0x%x </NEORV32-EXC>\n", mcause);
+  neorv32_uart_printf(UART_HW_HANDLE, "\n<NEORV32-EXC> mcause = 0x%x @ mepc = 0x%x </NEORV32-EXC>\n", mcause,mepc); // debug output
 }
 
 
@@ -160,7 +203,7 @@ void vToggleLED(void) {
  ******************************************************************************/
 void vSendString(const char * pcString) {
 
-	neorv32_uart0_puts( ( const char * ) pcString );
+	neorv32_uart_puts(UART_HW_HANDLE, (const char *)pcString);
 }
 
 
@@ -169,24 +212,24 @@ void vSendString(const char * pcString) {
  ******************************************************************************/
 void vAssertCalled(void) {
 
-  volatile uint32_t i;
+  uint32_t i;
 
 	taskDISABLE_INTERRUPTS();
 
-	/* Clear LEDs */
+	/* Clear all LEDs */
   neorv32_gpio_port_set(0);
 
-	/* Flash the lowest 4 LEDs to indicate that assert was hit - interrupts are off
+  neorv32_uart_puts(UART_HW_HANDLE, "FreeRTOS_FAULT: vAssertCalled called!\n");
+
+	/* Flash the lowest 2 LEDs to indicate that assert was hit - interrupts are off
 	here to prevent any further tick interrupts or context switches, so the
 	delay is implemented as a busy-wait loop instead of a peripheral timer. */
 	for (;;) {
-		for (i=0; i<(configCPU_CLOCK_HZ/10); i++) {
+		for (i=0; i<(configCPU_CLOCK_HZ/100); i++) {
 			__asm volatile( "nop" );
 		}
 		neorv32_gpio_pin_toggle(0);
 		neorv32_gpio_pin_toggle(1);
-		neorv32_gpio_pin_toggle(2);
-		neorv32_gpio_pin_toggle(3);
 	}
 }
 
@@ -212,9 +255,13 @@ void vApplicationMallocFailedHook(void) {
 	provide information on how the remaining heap might be fragmented). */
 
 	taskDISABLE_INTERRUPTS();
-  neorv32_uart0_puts("FreeRTOS_FAULT: vApplicationMallocFailedHook "
-                     "(increase 'configTOTAL_HEAP_SIZE' in FreeRTOSConfig.h)\n");
-	__asm volatile( "ebreak" );
+
+  neorv32_uart_puts(UART_HW_HANDLE,
+                    "FreeRTOS_FAULT: vApplicationMallocFailedHook "
+                    "(increase 'configTOTAL_HEAP_SIZE' in FreeRTOSConfig.h)\n");
+
+	__asm volatile("ebreak"); // trigger context switch
+
 	while(1);
 }
 
@@ -234,7 +281,7 @@ void vApplicationIdleHook(void) {
 	function, because it is the responsibility of the idle task to clean up
 	memory allocated by the kernel to any task that has since been deleted. */
 
-  neorv32_cpu_sleep();
+  neorv32_cpu_sleep(); // cpu wakes up on any interrupt request
 }
 
 
@@ -251,9 +298,13 @@ void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName) {
 	function is called if a stack overflow is detected. */
 
 	taskDISABLE_INTERRUPTS();
-  neorv32_uart0_puts("FreeRTOS_FAULT: vApplicationStackOverflowHook "
-                     "(increase 'configISR_STACK_SIZE_WORDS' in FreeRTOSConfig.h)\n");
-	__asm volatile( "ebreak" );
+
+  neorv32_uart_printf(UART_HW_HANDLE,
+                      "FreeRTOS_FAULT: vApplicationStackOverflowHook "
+                      "(increase 'configISR_STACK_SIZE_WORDS' in FreeRTOSConfig.h)\n");
+
+	__asm volatile("ebreak"); // trigger context switch
+
 	while(1);
 }
 
