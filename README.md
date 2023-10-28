@@ -21,7 +21,7 @@ processor-specific features.
 * [NEORV32](https://github.com/stnolting/neorv32) submodule
 * [FreeRTOS kernel-only](https://github.com/FreeRTOS/FreeRTOS-Kernel) submodule
 * Prebuilt [RISC-V GCC toolchain](https://github.com/stnolting/riscv-gcc-prebuilt)
-* [GHDL](https://github.com/ghdl/ghdl) for simulating the processor
+* [GHDL](https://github.com/ghdl/ghdl) for simulating the processor, optional
 
 #### Minimal processor configuration
 
@@ -31,7 +31,7 @@ processor-specific features.
   * DMEM (data memory): 8kB
 * Peripherals
   * RISC-V machine timer (MTIME)
-  * general-purpose timer (GPTMR); _optional_
+  * general-purpose timer (GPTMR), optional
   * UART0 as interface console
   * general purpose IO controller (GPIO); high-active LED connected to bits 1:0, LED at pin 0 is used as "heart beat"
 
