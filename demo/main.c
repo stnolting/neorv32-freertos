@@ -212,7 +212,7 @@ void vSendString(const char * pcString) {
  ******************************************************************************/
 void vAssertCalled(void) {
 
-  uint32_t i;
+  int i;
 
 	taskDISABLE_INTERRUPTS();
 
@@ -224,7 +224,7 @@ void vAssertCalled(void) {
 	/* Flash the lowest 2 LEDs to indicate that assert was hit - interrupts are off
 	here to prevent any further tick interrupts or context switches, so the
 	delay is implemented as a busy-wait loop instead of a peripheral timer. */
-	for (;;) {
+	while(1) {
 		for (i=0; i<(configCPU_CLOCK_HZ/100); i++) {
 			__asm volatile( "nop" );
 		}
