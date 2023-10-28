@@ -36,21 +36,21 @@
  * required to configure the hardware are defined in main.c.
  ******************************************************************************
  *
- * main_blinky() creates one queue, and two tasks.  It then starts the
+ * blinky() creates one queue, and two tasks.  It then starts the
  * scheduler.
  *
  * The Queue Send Task:
  * The queue send task is implemented by the prvQueueSendTask() function in
  * this file.  prvQueueSendTask() sits in a loop that causes it to repeatedly
  * block for 3000 milliseconds, before sending the value 100 to the queue that
- * was created within main_blinky().  Once the value is sent, the task loops
+ * was created within blinky().  Once the value is sent, the task loops
  * back around to block for another 3000 milliseconds...and so on.
  *
  * The Queue Receive Task:
  * The queue receive task is implemented by the prvQueueReceiveTask() function
  * in this file.  prvQueueReceiveTask() sits in a loop where it repeatedly
  * blocks on attempts to read data from the queue that was created within
- * main_blinky().  When data is received, the task checks the value of the
+ * blinky().  When data is received, the task checks the value of the
  * data, and if the value equals the expected 100, toggles an LED.  The 'block
  * time' parameter passed to the queue receive function specifies that the task
  * should be held in the Blocked state indefinitely to wait for data to be
@@ -62,7 +62,6 @@
  */
 
 /* Standard includes. */
-#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -75,9 +74,9 @@
 #define mainQUEUE_RECEIVE_TASK_PRIORITY         ( tskIDLE_PRIORITY + 2 )
 #define mainQUEUE_SEND_TASK_PRIORITY            ( tskIDLE_PRIORITY + 1 )
 
-/* The rate at which data is sent to the queue.  The 3000ms value is converted
+/* The rate at which data is sent to the queue.  The 500ms value is converted
  * to ticks using the pdMS_TO_TICKS() macro. */
-#define mainQUEUE_SEND_FREQUENCY_MS             pdMS_TO_TICKS( 3000 )
+#define mainQUEUE_SEND_FREQUENCY_MS             pdMS_TO_TICKS( 500 )
 
 /* The maximum number items the queue can hold.  The priority of the receiving
  * task is above the priority of the sending task, so the receiving task will
@@ -93,7 +92,7 @@
  * Called by main when mainCREATE_SIMPLE_BLINKY_DEMO_ONLY is set to 1 in
  * main.c.
  */
-void main_blinky( void );
+void blinky( void );
 
 /**
  * The tasks as described in the comments at the top of this file.
@@ -108,8 +107,8 @@ static QueueHandle_t xQueue = NULL;
 
 /*-----------------------------------------------------------*/
 
-void main_blinky( void )
-{
+void blinky( void ) {
+
     /* Create the queue. */
     xQueue = xQueueCreate( mainQUEUE_LENGTH, sizeof( unsigned long ) );
 
@@ -140,11 +139,11 @@ void main_blinky( void )
 }
 /*-----------------------------------------------------------*/
 
-static void prvQueueSendTask( void *pvParameters )
-{
-TickType_t xNextWakeTime;
-const unsigned long ulValueToSend = 100UL;
-BaseType_t xReturned;
+static void prvQueueSendTask( void *pvParameters ) {
+
+    TickType_t xNextWakeTime;
+    const unsigned long ulValueToSend = 100UL;
+    BaseType_t xReturned;
 
     /* Remove compiler warning about unused parameter. */
     ( void ) pvParameters;
@@ -167,12 +166,12 @@ BaseType_t xReturned;
 }
 /*-----------------------------------------------------------*/
 
-static void prvQueueReceiveTask( void *pvParameters )
-{
-unsigned long ulReceivedValue;
-const unsigned long ulExpectedValue = 100UL;
-extern void vToggleLED( void );
-TickType_t tickCount;
+static void prvQueueReceiveTask( void *pvParameters ) {
+
+
+    unsigned long ulReceivedValue;
+    const unsigned long ulExpectedValue = 100UL;
+    extern void vToggleLED( void );
 
     /* Remove compiler warning about unused parameter. */
     ( void ) pvParameters;
@@ -188,7 +187,6 @@ TickType_t tickCount;
          * is it the expected value?  If it is, toggle the LED. */
         if( ulReceivedValue == ulExpectedValue )
         {
-            tickCount = xTaskGetTickCount();
             vToggleLED();
             ulReceivedValue = 0U;
         }
