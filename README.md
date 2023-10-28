@@ -6,7 +6,7 @@
 * [Requirements](#requirements)
 * [Configuration](#configuration)
 * [How To Run](#how-to-run)
-* [Port Details](#port-details)
+* [Porting Details](#porting-details)
 
 This repository provides a full-featured port of [FreeRTOS](https://www.freertos.org/index.html)
 for the [NEORV32](https://github.com/stnolting/neorv32) RISC-V Processor. It implements a simple
@@ -57,7 +57,9 @@ for x86 Linux can be download from:
 
 `make clean_all exe`
 
-4. Upload the generated `neorv32_exe.bin` via the NEORV32 bootloader:
+:bulb: You can check the RISC-V GCC installation by running `make check`.
+
+4. Upload the generated `neorv32_exe.bin` file via the NEORV32 bootloader:
 
 ```
 << NEORV32 Bootloader >>
@@ -97,7 +99,7 @@ GPTMR IRQ Tick
 :bulb: Alternatively, you can also use the processor's on-chip debugger to upload the application via the
 generated `main.elf` file.
 
-6. If you have GHDL installed you can also run the demo in simulation using the processor's default
+5. If you have GHDL installed you can also run the demo in simulation using the processor's default
 testbench / simulation mode:
 
 `sh sim.sh`
@@ -105,7 +107,7 @@ testbench / simulation mode:
 [[_back to top_](#freertos-for-neorv32)]
 
 
-## Port Details
+## Porting Details
 
 The processor-specific FreeRTOS parts are configured by two files:
 
