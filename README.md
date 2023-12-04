@@ -4,7 +4,6 @@
 [![License](https://img.shields.io/github/license/stnolting/neorv32-freertos?longCache=true&style=flat-square&label=License)](https://github.com/stnolting/neorv32-freertos/blob/main/LICENSE)
 
 * [Requirements](#requirements)
-* [Configuration](#configuration)
 * [How To Run](#how-to-run)
 * [Porting Details](#porting-details)
 
@@ -38,14 +37,14 @@ processor-specific features.
 :books: For more information regarding the processor configuration options see the NEORV32's
 [online data sheet](https://stnolting.github.io/neorv32/).
 
-[[_back to top_](#freertos-for-neorv32)]
-
 
 ## How To Run
 
 1. Clone this repository recursively (to include the submodules):
 
-`git clone --recurse-submodules https://github.com/stnolting/neorv32-freertos.git`
+```bash
+$ git clone --recurse-submodules https://github.com/stnolting/neorv32-freertos.git
+```
 
 2. Install a RISC-V GCC toolchain that is able to emit code for a 32-bit architecture. Make sure that
 (at least) the [required ISA extensions](#requirements) are supported. An exemplary prebuilt toolchain
@@ -55,7 +54,9 @@ for x86 Linux can be download from:
 
 3. Navigate to the `demo` folder and compile the application:
 
-`make clean_all exe`
+```bash
+neorv32-freertos/demo$ make clean_all exe
+```
 
 :bulb: You can check the RISC-V GCC installation by running `make check`.
 
@@ -102,9 +103,9 @@ generated `main.elf` file.
 5. If you have GHDL installed you can also run the demo in simulation using the processor's default
 testbench / simulation mode:
 
-`sh sim.sh`
-
-[[_back to top_](#freertos-for-neorv32)]
+```bash
+neorv32-freertos/demo$ sh sim.sh
+```
 
 
 ## Porting Details
@@ -140,6 +141,4 @@ void freertos_risc_v_application_exception_handler(void);
 ```
 
 These functions are populated in the `main.c` file to showcase how to attach handlers for these traps.
-
-[[_back to top_](#freertos-for-neorv32)]
 
