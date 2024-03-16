@@ -34,7 +34,8 @@ processor-specific features.
   * UART0 as interface console
   * general purpose IO controller (GPIO); high-active LED connected to bits 1:0, LED at pin 0 is used as "heart beat"
 
-:books: For more information regarding the processor configuration options see the NEORV32's
+> [!TIP]
+> For more information regarding the processor configuration options see the NEORV32's
 [online data sheet](https://stnolting.github.io/neorv32/).
 
 
@@ -58,7 +59,8 @@ for x86 Linux can be download from:
 neorv32-freertos/demo$ make clean_all exe
 ```
 
-:bulb: You can check the RISC-V GCC installation by running `make check`.
+> [!TIP]
+> You can check the RISC-V GCC installation by running `make check`.
 
 4. Upload the generated `neorv32_exe.bin` file via the NEORV32 bootloader:
 
@@ -97,7 +99,8 @@ GPTMR IRQ Tick
 GPTMR IRQ Tick
 ```
 
-:bulb: Alternatively, you can also use the processor's on-chip debugger to upload the application via the
+> [!TIP]
+> Alternatively, you can also use the processor's on-chip debugger to upload the application via the
 generated `main.elf` file.
 
 5. If you have GHDL installed you can also run the demo in simulation using the processor's default
@@ -128,7 +131,8 @@ configured for the linker script, which is done inside the `makefile`:
 override USER_FLAGS += "-Wl,--defsym,__neorv32_heap_size=3500"
 ```
 
-:books: More information regarding the NEORV32 software framework can be found in the
+> [!TIP]
+> More information regarding the NEORV32 software framework can be found in the
 [online data sheet](https://stnolting.github.io/neorv32/#_software_framework).
 
 The NEORV32 supports all RISC-V exceptions and interrupts plus additional platform-specific
