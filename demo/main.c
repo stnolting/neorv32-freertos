@@ -145,7 +145,7 @@ static void prvSetupHardware(void) {
   if (neorv32_gptmr_available() != 0) { // GPTMR implemented at all?
 
     // configure timer for in continuous mode with clock divider = 64
-    // fire interrupt every 4 seconds
+    // fire interrupt every 4 seconds (continuous mode)
     neorv32_gptmr_setup(CLK_PRSC_64, ((uint32_t)configCPU_CLOCK_HZ / 64) * 4, 1);
 
     // enable GPTMR interrupt
@@ -163,7 +163,7 @@ void freertos_risc_v_application_interrupt_handler(void) {
   uint32_t mcause = neorv32_cpu_csr_read(CSR_MCAUSE);
 
   if (mcause == GPTMR_TRAP_CODE) { // is GPTMR interrupt
-    neorv32_gptmr_trigger_matched(); // clear GPTMR timer-match interrupt
+    neorv32_gptmr_irq_ack(); // clear GPTMR timer-match interrupt
     neorv32_uart_printf(UART_HW_HANDLE, "GPTMR IRQ Tick\n");
   }
   else { // undefined interrupt cause
