@@ -1,4 +1,4 @@
-# FreeRTOS for NEORV32
+# FreeRTOS on NEORV32
 
 [![neorv32-freertos](https://img.shields.io/github/actions/workflow/status/stnolting/neorv32-freertos/main.yml?branch=main&longCache=true&style=flat-square&label=neorv32-freertos%20sim&logo=Github%20Actions&logoColor=fff)](https://github.com/stnolting/neorv32-freertos/actions/workflows/main.yml)
 [![License](https://img.shields.io/github/license/stnolting/neorv32-freertos?longCache=true&style=flat-square&label=License)](https://github.com/stnolting/neorv32-freertos/blob/main/LICENSE)
@@ -15,14 +15,14 @@ processor-specific features.
 
 ## Requirements
 
-#### Tools and framework
+#### Tools and Framework
 
 * [NEORV32](https://github.com/stnolting/neorv32) submodule
 * [FreeRTOS kernel-only](https://github.com/FreeRTOS/FreeRTOS-Kernel) submodule
 * Prebuilt [RISC-V GCC toolchain](https://github.com/stnolting/riscv-gcc-prebuilt)
 * [GHDL](https://github.com/ghdl/ghdl) for simulating the processor, optional
 
-#### Minimal processor configuration
+#### Minimal Processor Configuration
 
 * CPU architecture and ISA extensions: `rv32i_zicsr_zifencei`
 * Memory
@@ -33,10 +33,6 @@ processor-specific features.
   * general-purpose timer (GPTMR), optional
   * UART0 as interface console
   * general purpose IO controller (GPIO); high-active LED connected to bits 1:0, LED at pin 0 is used as "heart beat"
-
-> [!TIP]
-> For more information regarding the processor configuration options see the NEORV32's
-[online data sheet](https://stnolting.github.io/neorv32/).
 
 
 ## How To Run
