@@ -41,7 +41,6 @@
 #define UART_HW_HANDLE (NEORV32_UART0) // use UART0 (primary UART)
 
 /* External definitions */
-extern const unsigned __crt0_max_heap;          // may heap size from NEORV32 linker script
 extern void blinky(void);                       // actual show-case application
 extern void freertos_risc_v_trap_handler(void); // FreeRTOS core
 
@@ -119,13 +118,12 @@ static void prvSetupHardware(void) {
   }
 
   // check heap size configuration
-  uint32_t neorv32_max_heap = (uint32_t)&__crt0_max_heap;
-  if ((uint32_t)&__crt0_max_heap != (uint32_t)configTOTAL_HEAP_SIZE){
+  if ((uint32_t)neorv32_heap_size_c != (uint32_t)configTOTAL_HEAP_SIZE){
     neorv32_uart_printf(UART_HW_HANDLE,
                         "WARNING! Incorrect 'configTOTAL_HEAP_SIZE' configuration!\n"
                         "FreeRTOS configTOTAL_HEAP_SIZE: %u bytes\n"
                         "NEORV32 makefile heap size:     %u bytes\n\n",
-                        (uint32_t)configTOTAL_HEAP_SIZE, neorv32_max_heap);
+                        (uint32_t)configTOTAL_HEAP_SIZE, neorv32_heap_size_c);
   }
 
   // check clock frequency configuration
