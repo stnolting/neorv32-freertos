@@ -31,8 +31,8 @@ APP_INC += -I $(FREERTOS_HOME)/include
 
 # RISC-V specifics
 APP_SRC += $(wildcard  $(FREERTOS_HOME)/portable/GCC/RISC-V/*.c)
-APP_SRC +=  $(FREERTOS_HOME)/portable/GCC/RISC-V/portASM.S
-APP_INC += -I  $(FREERTOS_HOME)/portable/GCC/RISC-V
+APP_SRC += $(FREERTOS_HOME)/portable/GCC/RISC-V/portASM.S
+APP_INC += -I $(FREERTOS_HOME)/portable/GCC/RISC-V
 
 # Heap management
 APP_SRC += $(wildcard  $(FREERTOS_HOME)/portable/MemMang/heap_4.c)
