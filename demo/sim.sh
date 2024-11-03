@@ -11,7 +11,7 @@ make USER_FLAGS+="-DUART0_SIM_MODE" clean_all exe asm install
 make -i GHDL_RUN_FLAGS="--stop-time=1ms" sim
 
 # check UART0 output file if program execution was successful
-if grep -rniq ../neorv32/sim/simple/neorv32.uart0.sim_mode.text.out -e 'NEORV32 running FreeRTOS'
+if grep -rniq ../neorv32/sim/neorv32.uart0.sim_mode.text.out -e 'NEORV32 running FreeRTOS'
 then
   echo "Test PASSED!"
   exit 0
