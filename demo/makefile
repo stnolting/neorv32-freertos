@@ -2,12 +2,8 @@
 # NEORV32 FreeRTOS Makefile
 # *****************************************************************************
 
-# FreeRTOS home folder
-FREERTOS_HOME ?= ../FreeRTOS-Kernel
-
-# NEORV32 home folder
-NEORV32_HOME ?= ../neorv32
-
+# Override the default RISC-V GCC prefix
+RISCV_PREFIX ?= riscv-none-elf-
 
 # User's application sources (*.c, *.cpp, *.s, *.S); add additional files here
 APP_SRC = $(wildcard ./*.c) $(wildcard ./*.s) $(wildcard ./*.cpp) $(wildcard ./*.S)
@@ -25,6 +21,9 @@ USER_FLAGS =
 # FreeRTOS
 # -----------------------------------------------------------------------------
 
+# FreeRTOS home folder
+FREERTOS_HOME ?= ../FreeRTOS-Kernel
+
 # Kernel
 APP_SRC += $(wildcard $(FREERTOS_HOME)/*.c)
 APP_INC += -I $(FREERTOS_HOME)/include
@@ -40,6 +39,9 @@ APP_SRC += $(wildcard  $(FREERTOS_HOME)/portable/MemMang/heap_4.c)
 # -----------------------------------------------------------------------------
 # NEORV32
 # -----------------------------------------------------------------------------
+
+# NEORV32 home folder
+NEORV32_HOME ?= ../neorv32
 
 # Set maximum heap size
 override USER_FLAGS += "-Wl,--defsym,__neorv32_heap_size=3500"
