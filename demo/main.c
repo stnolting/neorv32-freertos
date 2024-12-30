@@ -107,9 +107,9 @@ static void prvSetupHardware(void) {
   // Configuration checks
   // ----------------------------------------------------------
 
-  // machine timer available?
-  if (neorv32_mtime_available() == 0) {
-    neorv32_uart_printf(UART_HW_HANDLE, "WARNING! MTIME machine timer not available!\n");
+  // CLINT available?
+  if (neorv32_clint_available() == 0) {
+    neorv32_uart_printf(UART_HW_HANDLE, "ERROR! CLINT not available!\n");
   }
 
   // general purpose timer available?

@@ -40,8 +40,8 @@
  *
  * See http://www.freertos.org/a00110.html.
  *----------------------------------------------------------*/
-#define configMTIME_BASE_ADDRESS                ( NEORV32_MTIME_BASE + 0 )
-#define configMTIMECMP_BASE_ADDRESS             ( NEORV32_MTIME_BASE + 8 )
+#define configMTIME_BASE_ADDRESS                ( NEORV32_CLINT_BASE + 0xbff8 )
+#define configMTIMECMP_BASE_ADDRESS             ( NEORV32_CLINT_BASE + 0x4000 )
 #define configISR_STACK_SIZE_WORDS              ( 128 )
 #define configUSE_PREEMPTION                    ( 1 )
 #define configUSE_IDLE_HOOK                     ( 1 )
