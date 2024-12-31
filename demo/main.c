@@ -117,15 +117,6 @@ static void prvSetupHardware(void) {
     neorv32_uart_printf(UART_HW_HANDLE, "WARNING! GPTMR timer not available!\n");
   }
 
-  // check heap size configuration
-  if ((uint32_t)neorv32_heap_size_c != (uint32_t)configTOTAL_HEAP_SIZE){
-    neorv32_uart_printf(UART_HW_HANDLE,
-                        "WARNING! Incorrect 'configTOTAL_HEAP_SIZE' configuration!\n"
-                        "FreeRTOS configTOTAL_HEAP_SIZE: %u bytes\n"
-                        "NEORV32 makefile heap size:     %u bytes\n\n",
-                        (uint32_t)configTOTAL_HEAP_SIZE, neorv32_heap_size_c);
-  }
-
   // check clock frequency configuration
   uint32_t neorv32_clk_hz = (uint32_t)NEORV32_SYSINFO->CLK;
   if (neorv32_clk_hz != (uint32_t)configCPU_CLOCK_HZ) {
@@ -245,11 +236,15 @@ void vApplicationMallocFailedHook(void) {
 	function that will get called if a call to pvPortMalloc() fails.
 	pvPortMalloc() is called internally by the kernel whenever a task, queue,
 	timer or semaphore is created. It is also called by various parts of the
-	demo application. If heap_1.c or heap_2.c are used, then the size of the
-	heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
-	FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
-	to query the size of free heap space that remains (although it does not
-	provide information on how the remaining heap might be fragmented). */
+	demo application. The size of the heap available to pvPortMalloc() is
+	defined by configTOTAL_HEAP_SIZE in FreeRTOSConfig.h. The
+	xPortGetFreeHeapSize() API function can be used to query the size of free
+	heap space that remains (although it does not provide information on how
+	the remaining heap might be fragmented).
+
+	If heap_3.c is used, then configTOTAL_HEAP_SIZE has no effect and the heap
+	size is instead defined by setting the linker variable __neorv32_heap_size.
+	xPortGetFreeHeapSize() cannot be used with heap_3.c. */
 
 	taskDISABLE_INTERRUPTS();
 

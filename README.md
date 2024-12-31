@@ -118,15 +118,6 @@ The NEORV32-specific parts are configured right inside the `main.c` file and the
 The hardware abstraction layer (HAL) is provided by the NEORV32 software framework, which also provides
 the start-up code and linker script.
 
-As the linker script is also responsible for configuring application- and setup-specific memory layout
-the actual configuration has to be overridden according to the application setup. For example the heap
-size is configured by `configTOTAL_HEAP_SIZE` in `FreeRTOSConfig.h`. This size also needs to be
-configured for the linker script, which is done inside the `makefile`:
-
-```makefile
-override USER_FLAGS += "-Wl,--defsym,__neorv32_heap_size=3500"
-```
-
 > [!TIP]
 > More information regarding the NEORV32 software framework can be found in the
 [online data sheet](https://stnolting.github.io/neorv32/#_software_framework).
