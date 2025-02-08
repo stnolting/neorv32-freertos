@@ -40,9 +40,9 @@
  *
  * See http://www.freertos.org/a00110.html.
  *----------------------------------------------------------*/
-#define configMTIME_BASE_ADDRESS                ( NEORV32_CLINT_BASE + 0xbff8 )
-#define configMTIMECMP_BASE_ADDRESS             ( NEORV32_CLINT_BASE + 0x4000 )
-#define configISR_STACK_SIZE_WORDS              ( 128 )
+#define configMTIME_BASE_ADDRESS                ( NEORV32_CLINT_BASE + 0xbff8u )
+#define configMTIMECMP_BASE_ADDRESS             ( NEORV32_CLINT_BASE + 0x4000u )
+#define configISR_STACK_SIZE_WORDS              ( 256 )
 #define configUSE_PREEMPTION                    ( 1 )
 #define configUSE_IDLE_HOOK                     ( 1 )
 #define configUSE_TICK_HOOK                     ( 1 )
@@ -50,7 +50,7 @@
 #define configTICK_RATE_HZ                      ( (TickType_t)(100) )
 #define configMAX_PRIORITIES                    ( 5 )
 #define configMINIMAL_STACK_SIZE                ( (unsigned short)(128) )
-#define configTOTAL_HEAP_SIZE                   ( (size_t)(3500) )
+#define configTOTAL_HEAP_SIZE                   ( (size_t)(4096) )
 #define configMAX_TASK_NAME_LEN                 ( 16 )
 #define configUSE_TRACE_FACILITY                ( 0 )
 #define configUSE_16_BIT_TICKS                  ( 0 )
