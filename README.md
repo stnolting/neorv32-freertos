@@ -19,7 +19,7 @@ processor-specific features.
 
 * [NEORV32](https://github.com/stnolting/neorv32) submodule
 * [FreeRTOS kernel-only](https://github.com/FreeRTOS/FreeRTOS-Kernel) submodule
-* Prebuilt [RISC-V GCC toolchain](https://github.com/stnolting/riscv-gcc-prebuilt)
+* [RISC-V GCC toolchain](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack)
 * [GHDL](https://github.com/ghdl/ghdl) for simulating the processor, optional
 
 #### Minimal Processor Configuration
