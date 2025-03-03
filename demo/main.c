@@ -134,8 +134,8 @@ static void prvSetupHardware(void) {
   if (neorv32_gptmr_available() != 0) { // GPTMR implemented at all?
 
     // configure timer for in continuous mode with clock divider = 64
-    // fire interrupt every 4 seconds (continuous mode)
-    neorv32_gptmr_setup(CLK_PRSC_64, ((uint32_t)configCPU_CLOCK_HZ / 64) * 4, 1);
+    // fire interrupt every 4 seconds
+    neorv32_gptmr_setup(CLK_PRSC_64, ((uint32_t)configCPU_CLOCK_HZ / 64) * 4);
 
     // enable GPTMR interrupt
     neorv32_cpu_csr_set(CSR_MIE, 1 << GPTMR_FIRQ_ENABLE);
