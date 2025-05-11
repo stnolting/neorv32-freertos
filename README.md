@@ -49,7 +49,32 @@ for x86 Linux can be download from:
 
 [github.com/stnolting/riscv-gcc-prebuilt](https://github.com/stnolting/riscv-gcc-prebuilt)
 
-3. Navigate to the `demo` folder and compile the application:
+3. Before you can compile the firmware, you need to make sure your hardware configuration is sync to
+the software configuration (ISA configuration and memory layout) If you are using the default configuration
+you can move on to the next step. Otherwise you need to adjust the according parts of the [Makefile](demo/makefile):
+
+```makefile
+# Override the default CPU ISA and ABI
+MARCH = rv32i_zicsr_zifencei
+MABI  = ilp32
+
+# Set RISC-V GCC prefix
+RISCV_PREFIX ?= riscv-none-elf-
+
+# Override default optimization goal
+EFFORT = -Os
+
+# Adjust processor IMEM size and base address
+USER_FLAGS += -Wl,--defsym,__neorv32_rom_size=16k
+USER_FLAGS += -Wl,--defsym,__neorv32_rom_base=0x00000000
+
+# Adjust processor DMEM size and base address
+USER_FLAGS += -Wl,--defsym,__neorv32_ram_size=8k
+USER_FLAGS += -Wl,--defsym,__neorv32_ram_base=0x80000000
+```
+
+
+4. Navigate to the `demo` folder and compile the application:
 
 ```bash
 neorv32-freertos/demo$ make clean_all exe
@@ -58,7 +83,7 @@ neorv32-freertos/demo$ make clean_all exe
 > [!TIP]
 > You can check the RISC-V GCC installation by running `make check`.
 
-4. Upload the generated `neorv32_exe.bin` file via the NEORV32 bootloader:
+5. Upload the generated `neorv32_exe.bin` file via the NEORV32 bootloader:
 
 ```
 << NEORV32 Bootloader >>
@@ -99,7 +124,7 @@ GPTMR IRQ Tick
 > Alternatively, you can also use the processor's on-chip debugger to upload the application via the
 generated `main.elf` file.
 
-5. If you have GHDL installed you can also run the demo in simulation using the processor's default
+6. If you have GHDL installed you can also run the demo in simulation using the processor's default
 testbench / simulation mode:
 
 ```bash
