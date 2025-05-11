@@ -66,7 +66,7 @@ int main( void ) {
 	prvSetupHardware();
 
   // say hello
-  neorv32_uart_printf(UART_HW_HANDLE, "<<< NEORV32 running FreeRTOS %s >>>\n\n", tskKERNEL_VERSION_NUMBER);
+  neorv32_uart_printf(UART_HW_HANDLE, "\n<<< NEORV32 running FreeRTOS %s >>>\n\n", tskKERNEL_VERSION_NUMBER);
 
   // run actual application code
   blinky();
