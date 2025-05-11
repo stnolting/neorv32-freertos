@@ -47,5 +47,23 @@ NEORV32_HOME ?= ../neorv32
 APP_INC += -I chip_specific_extensions/neorv32
 ASM_INC += -I chip_specific_extensions/neorv32
 
+# Override the default CPU ISA and ABI
+MARCH = rv32i_zicsr_zifencei
+MABI  = ilp32
+
+# Set RISC-V GCC prefix
+RISCV_PREFIX ?= riscv-none-elf-
+
+# Override default optimization goal
+EFFORT = -Os
+
+# Adjust processor IMEM size and base address
+USER_FLAGS += -Wl,--defsym,__neorv32_rom_size=16k
+USER_FLAGS += -Wl,--defsym,__neorv32_rom_base=0x00000000
+
+# Adjust processor DMEM size and base address
+USER_FLAGS += -Wl,--defsym,__neorv32_ram_size=8k
+USER_FLAGS += -Wl,--defsym,__neorv32_ram_base=0x80000000
+
 # Software framework, HAL, build environment, etc.
 include $(NEORV32_HOME)/sw/common/common.mk
