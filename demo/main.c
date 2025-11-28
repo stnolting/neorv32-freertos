@@ -140,6 +140,7 @@ static void prvSetupHardware(void) {
 
     // enable GPTMR interrupt
     neorv32_cpu_csr_set(CSR_MIE, 1 << GPTMR_FIRQ_ENABLE);
+    neorv32_gptmr_enable_single(0);
   }
 }
 
